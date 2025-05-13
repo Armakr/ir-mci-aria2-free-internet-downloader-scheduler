@@ -1,99 +1,60 @@
-Here's the optimized `README.md` based on your actual script:
+Here's the fully corrected `README.md` with your exact filenames and configurations integrated:
 
 ```markdown
-# Automated Download Manager (aria2c + ProxyChains)
+# Auto Downloader (aria2c + ProxyChains)
 
-![Bash](https://img.shields.io/badge/-Bash-4EAA25?logo=gnu-bash&logoColor=white)
+![Bash](https://img.shields.io/badge/-Bash-4EAA25?logo=gnu-bash&logoColor=white) 
 ![aria2](https://img.shields.io/badge/-aria2-FF6600?logo=aria2&logoColor=white)
 ![ProxyChains](https://img.shields.io/badge/-ProxyChains-8A2BE2)
 
-A robust Bash script for automated high-speed downloads through proxies with time-based execution control.
-
-## Key Features ✨
-
-- 🕒 **Time-Aware Execution**: Auto-terminates at 11:00 AM (configurable)
-- 🔄 **Resumable Downloads**: Built-in retry mechanism with 5-minute intervals
-- ⚡ **High Performance**: 16 parallel connections per download
-- 📁 **Batch Processing**: Handles multiple URLs from a text file
-- 🔒 **Proxy Support**: Seamless integration with ProxyChains
-- 🛡️ **Safe Execution**: Automatic directory creation and input validation
-
-## Prerequisites 📦
-
+## 📂 File Specifications
 ```bash
-# Install required packages
+auto_downloader.sh       # Main script (space-free name recommended)
+to\ download.txt         # URL list (escape spaces in commands)
+```
+
+## 🛠️ Installation
+```bash
 sudo apt update && sudo apt install -y aria2 proxychains
+chmod +x auto_downloader.sh
 ```
 
-## Usage 🚀
-
-1. Prepare your URL list (`urls.txt`):
-   ```text
-   https://example.com/large-file.zip
-   https://mirror.org/package.tar.gz
-   ```
-
-2. Run the script:
-   ```bash
-   chmod +x download_script.sh
-   ./download_script.sh urls.txt /path/to/downloads
-   ```
-
-## Advanced Configuration ⚙️
-
-### Proxy Setup (`/etc/proxychains.conf`):
-```ini
-socks5 127.0.0.1 9050  # Tor example
-http 192.168.1.100 8080  # HTTP proxy example
-```
-
-### Script Options:
-| Parameter          | Description                          | Default          |
-|--------------------|--------------------------------------|------------------|
-| `--split=N`        | Download connections per file       | 16               |
-| `--max-tries=N`    | Maximum retry attempts              | 0 (infinite)     |
-| `--timeout=SECONDS`| Network timeout                     | 60               |
-
-## Cron Setup ⏰
-
+## 🚀 Basic Usage
 ```bash
-# Open crontab editor
-crontab -e
-
-# Add line for daily execution at 1:00 AM
-0 1 * * * /path/to/download_script.sh /path/to/urls.txt /path/to/downloads >> /var/log/downloader.log 2>&1
+./auto_downloader.sh
 ```
 
-## Technical Details 🔍
-
-### Process Flow:
-```mermaid
-graph TD
-    A[Start] --> B[Check Time]
-    B --> C{Before 11AM?}
-    C -->|Yes| D[Start Downloads]
-    C -->|No| E[Exit]
-    D --> F[Monitor Progress]
-    F --> G{Complete?}
-    G -->|No| B
-    G -->|Yes| H[Wait 5 Minutes]
-    H --> B
+## ⏰ Cron Setup (Daily at 1AM)
+```bash
+0 1 * * * /bin/bash /path/to/auto_downloader.sh
 ```
 
-### File Structure:
-```
-downloader/
-├── download_script.sh    # Main script (make executable)
-├── urls.txt             # URL list (one per line)
-├── downloads/          # Default output directory
-└── README.md           # This documentation
-```
+## 🔄 How It Handles Interruptions
+| Scenario          | Behavior                              | Recovery Method                     |
+|-------------------|---------------------------------------|-------------------------------------|
+| 11AM cutoff       | Stops immediately                     | Rerun next day                      |
+| Network failure   | Retries every 5 minutes               | Automatic                           |
+| Power loss        | Resumes partial files                 | Run same command again              |
+| File in use       | Skips to next URL                     | Manual retry needed                 |
 
-## Troubleshooting 🛠️
+## 📝 Recommended Improvement
 
-| Issue                  | Solution                              |
-|------------------------|---------------------------------------|
-| Proxy connection fails | Verify `/etc/proxychains.conf`        |
-| SSL errors             | Remove `--check-certificate=false`    |
-| Permission denied      | Run with `sudo` or fix permissions    |
-| Incomplete downloads   | Check disk space and network stability|
+1. **Cron requires absolute paths**:
+   ```bash
+   # Bad (won't work):
+   0 1 * * * ./auto_downloader.sh ...
+   
+   # Good:
+   0 1 * * * /full/path/to/auto_downloader.sh ...
+   ```
+
+## 📊 Sample File Structure
+```
+~/downloads/
+├── auto_downloader.sh
+├── to\ download.txt    # Your URL list
+├── downloads/         # Default output
+│   ├── file1.zip
+│   └── file2.pdf
+└── auto_downloader.log
+```
