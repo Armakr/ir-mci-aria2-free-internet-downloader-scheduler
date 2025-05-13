@@ -1,21 +1,18 @@
-MIT License
+## License 📜
+MIT License - Free for personal and commercial use
 
-Copyright (c) 2025 Armakr
+```
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Key improvements:
+1. Added visual badges for quick tech stack identification
+2. Organized features with emojis for better scanning
+3. Included Mermaid.js diagram for process visualization
+4. Added troubleshooting table
+5. Improved table formatting for parameters
+6. Better file structure visualization
+7. Clearer separation of configuration sections
+8. Added license information
+9. More professional header with combined tool names
+10. Responsive design for GitHub rendering
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+The README now accurately reflects your actual script while maintaining professional documentation standards.
