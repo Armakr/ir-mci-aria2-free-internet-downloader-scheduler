@@ -1,74 +1,99 @@
-Here's the optimized version of your text in GitHub Markdown code frames with improved formatting:
+Here's the optimized `README.md` based on your actual script:
 
 ```markdown
-# Download Automation Script (aria2c + ProxyChains)
+# Automated Download Manager (aria2c + ProxyChains)
 
-## Project Overview
-Bash script that automates downloading files from a list of URLs using `aria2c` and `proxychains`. Designed for Iran's Hamrah Aval network (free internet 1:00 AM - 11:00 AM).
+![Bash](https://img.shields.io/badge/-Bash-4EAA25?logo=gnu-bash&logoColor=white)
+![aria2](https://img.shields.io/badge/-aria2-FF6600?logo=aria2&logoColor=white)
+![ProxyChains](https://img.shields.io/badge/-ProxyChains-8A2BE2)
+
+A robust Bash script for automated high-speed downloads through proxies with time-based execution control.
+
+## Key Features ✨
+
+- 🕒 **Time-Aware Execution**: Auto-terminates at 11:00 AM (configurable)
+- 🔄 **Resumable Downloads**: Built-in retry mechanism with 5-minute intervals
+- ⚡ **High Performance**: 16 parallel connections per download
+- 📁 **Batch Processing**: Handles multiple URLs from a text file
+- 🔒 **Proxy Support**: Seamless integration with ProxyChains
+- 🛡️ **Safe Execution**: Automatic directory creation and input validation
+
+## Prerequisites 📦
 
 ```bash
-proxychains4 aria2c -s16 -x16 -i urls.txt -d downloads/
+# Install required packages
+sudo apt update && sudo apt install -y aria2 proxychains
 ```
 
-## Key Features
-- 📥 **List-based Downloads**: Processes URLs from a text file (one per line)
-- ⚡ **High-Speed Downloads**: Uses `aria2`'s multi-connection engine
-- 🔒 **Proxy Support**: Routes traffic through configured proxy (e.g., Tor)
-- ⏰ **Time-Aware**: Auto-stops at 11:00 AM to avoid data charges
-- 🤖 **Cron-Compatible**: Designed for nightly automated runs
+## Usage 🚀
 
-## Prerequisites
-```bash
-# aria2 (Download Utility)
-sudo apt update && sudo apt install aria2
-
-# ProxyChains + Tor (Proxy Wrapper)
-sudo apt install proxychains tor
-```
-
-## Usage
-1. Prepare URL list (`urls.txt`):
-   ```
-   http://example.com/file1.zip
-   http://example.org/video.mp4
+1. Prepare your URL list (`urls.txt`):
+   ```text
+   https://example.com/large-file.zip
+   https://mirror.org/package.tar.gz
    ```
 
-2. Configure ProxyChains (`/etc/proxychains.conf`):
-   ```ini
-   socks5 127.0.0.1 9050  # Tor example
-   ```
-
-3. Make script executable:
+2. Run the script:
    ```bash
    chmod +x download_script.sh
-   ```
-
-4. Run script:
-   ```bash
    ./download_script.sh urls.txt /path/to/downloads
    ```
 
-## Cron Setup
+## Advanced Configuration ⚙️
+
+### Proxy Setup (`/etc/proxychains.conf`):
+```ini
+socks5 127.0.0.1 9050  # Tor example
+http 192.168.1.100 8080  # HTTP proxy example
+```
+
+### Script Options:
+| Parameter          | Description                          | Default          |
+|--------------------|--------------------------------------|------------------|
+| `--split=N`        | Download connections per file       | 16               |
+| `--max-tries=N`    | Maximum retry attempts              | 0 (infinite)     |
+| `--timeout=SECONDS`| Network timeout                     | 60               |
+
+## Cron Setup ⏰
+
 ```bash
-0 1 * * * /bin/bash /path/to/download_script.sh /path/to/urls.txt /path/to/downloads
+# Open crontab editor
+crontab -e
+
+# Add line for daily execution at 1:00 AM
+0 1 * * * /path/to/download_script.sh /path/to/urls.txt /path/to/downloads >> /var/log/downloader.log 2>&1
 ```
 
-## File Structure
-```
-project/
-├── download_script.sh  # Main Bash script
-├── urls.txt            # URL list (one per line)
-└── README.md           # Documentation
+## Technical Details 🔍
+
+### Process Flow:
+```mermaid
+graph TD
+    A[Start] --> B[Check Time]
+    B --> C{Before 11AM?}
+    C -->|Yes| D[Start Downloads]
+    C -->|No| E[Exit]
+    D --> F[Monitor Progress]
+    F --> G{Complete?}
+    G -->|No| B
+    G -->|Yes| H[Wait 5 Minutes]
+    H --> B
 ```
 
-## Configuration Tips
-- Set `--allow-overwrite=true` in aria2 to overwrite files
-- Adjust `-s` and `-x` parameters for connection count
-- Add logging to track download progress
-- Use full paths in cron jobs
-
-## References
-- [aria2 Documentation](https://aria2.github.io)
-- [ProxyChains Example](https://gist.github.com)
-- [Cron Guide](https://geeksforgeeks.org)
+### File Structure:
 ```
+downloader/
+├── download_script.sh    # Main script (make executable)
+├── urls.txt             # URL list (one per line)
+├── downloads/          # Default output directory
+└── README.md           # This documentation
+```
+
+## Troubleshooting 🛠️
+
+| Issue                  | Solution                              |
+|------------------------|---------------------------------------|
+| Proxy connection fails | Verify `/etc/proxychains.conf`        |
+| SSL errors             | Remove `--check-certificate=false`    |
+| Permission denied      | Run with `sudo` or fix permissions    |
+| Incomplete downloads   | Check disk space and network stability|
