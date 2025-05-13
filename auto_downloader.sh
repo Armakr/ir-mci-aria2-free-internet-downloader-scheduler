@@ -1,39 +1,37 @@
 #!/bin/bash
 
-# Define file list location and download destination
-file_list="/home/arman/Desktop/to download.txt"
-download_dir="/home/arman/Downloads"
+# Validate command-line arguments
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <url-file> <download-dir>"
+    exit 1
+fi
 
-# Function to check if it's past 11:00 AM and stop the script
+file_list="$1"
+download_dir="$2"
+
+# Create download directory if not exists
+mkdir -p "$download_dir" || exit 1
+
 check_time() {
-    current_time=$(date +%H)
-    if [ "$current_time" -ge 11 ]; then
-        echo "It's past 11:00 AM. Stopping the script."
-        exit 0
-    fi
+    [ $(date +%H) -ge 11 ] && { echo "Stopping at 11:00 AM"; exit 0; }
 }
 
-# Check if the current time is past 11:00 AM
 check_time
 
-# Loop over each file URL in the list
-while IFS= read -r url; do
-    if [ -n "$url" ]; then
-        echo "Starting download for: $url"
-        
-        # Use proxychains with aria2c to download the file and overwrite if exists
-        proxychains aria2c --dir="$download_dir" --out="$(basename "$url")" --continue=true "$url" &
-        
-        # Wait for the download to finish, but periodically check the time
-        while true; do
-            check_time
-            if ! pgrep -x "aria2c" > /dev/null; then
-                # If aria2c is done, break out of the loop
-                echo "Download completed for: $url"
-                break
-            fi
-            sleep 5 # Check every 5 seconds
-        done
-    fi
-done < "$file_list"
-
+# Download with timeout until 11 AM
+while true; do
+    check_time
+    proxychains aria2c \
+        --continue=true \
+        --max-connection-per-server=16 \
+        --split=16 \
+        --max-tries=0 \
+        --check-certificate=false \
+        --auto-file-renaming=false \
+        --dir="$download_dir" \
+        --input-file="$file_list"
+    
+    # Exit if aria2 completes or time expires
+    check_time || exit 0
+    sleep 300  # Wait 5 minutes before retrying
+done
